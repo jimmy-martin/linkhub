@@ -1,5 +1,5 @@
 export class UpdateLinksDto {
-  readonly name?: string | null;
-  readonly url?: string | null;
-  readonly categoryId?: number | null;
+  readonly name?: string;
+  readonly url?: string;
+  readonly categoryId?: number;
 }
