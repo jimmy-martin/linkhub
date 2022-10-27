@@ -15,6 +15,16 @@ import { CreateCategoriesDto, UpdateCategoriesDto } from './dto';
 export class CategoriesController {
   constructor(private readonly categoriesService: CategoriesService) {}
 
+  @Get(':id')
+  find(@Param('id') id: number): Promise<CategoryModel> {
+    return this.categoriesService.find(id);
+  }
+
+  @Get()
+  findAll(): Promise<CategoryModel[]> {
+    return this.categoriesService.findAll();
+  }
+
   @Post()
   create(@Body() dto: CreateCategoriesDto): Promise<CategoryModel> {
     return this.categoriesService.create(dto);
@@ -26,16 +36,6 @@ export class CategoriesController {
     @Body() dto: UpdateCategoriesDto,
   ): Promise<CategoryModel> {
     return this.categoriesService.update(id, dto);
-  }
-
-  @Get()
-  findAll(): Promise<CategoryModel[]> {
-    return this.categoriesService.findAll();
-  }
-
-  @Get(':id')
-  find(@Param('id') id: number): Promise<CategoryModel> {
-    return this.categoriesService.find(id);
   }
 
   @Delete(':id')

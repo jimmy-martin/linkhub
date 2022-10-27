@@ -15,6 +15,16 @@ import { LinksService } from './links.service';
 export class LinksController {
   constructor(private readonly linksServices: LinksService) {}
 
+  @Get(':id')
+  find(@Param('id') id: number): Promise<LinkModel> {
+    return this.linksServices.find(id);
+  }
+
+  @Get()
+  findall(): Promise<LinkModel[]> {
+    return this.linksServices.findAll();
+  }
+
   @Post()
   create(@Body() dto: CreateLinksDto) {
     return this.linksServices.create(dto);
@@ -26,16 +36,6 @@ export class LinksController {
     @Body() dto: UpdateLinksDto,
   ): Promise<LinkModel> {
     return this.linksServices.update(id, dto);
-  }
-
-  @Get()
-  findall(): Promise<LinkModel[]> {
-    return this.linksServices.findAll();
-  }
-
-  @Get(':id')
-  find(@Param('id') id: number): Promise<LinkModel> {
-    return this.linksServices.find(id);
   }
 
   @Delete(':id')
