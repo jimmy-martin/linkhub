@@ -9,7 +9,7 @@ export class LinksService {
 
   async create(dto: CreateLinksDto): Promise<LinkModel> {
     const { name, url, categoryId } = dto;
-    const link = await this.prismaService.link.create({
+    return await this.prismaService.link.create({
       data: {
         name,
         url,
@@ -23,12 +23,10 @@ export class LinksService {
         },
       },
     });
-
-    return link;
   }
 
   async update(id: number, dto: UpdateLinksDto): Promise<LinkModel> {
-    const link = await this.prismaService.link.update({
+    return await this.prismaService.link.update({
       where: {
         id: Number(id),
       },
@@ -36,12 +34,10 @@ export class LinksService {
         ...dto,
       },
     });
-
-    return link;
   }
 
   async findAll(): Promise<LinkModel[]> {
-    const links = await this.prismaService.link.findMany({
+    return await this.prismaService.link.findMany({
       include: {
         category: {
           select: {
@@ -50,11 +46,10 @@ export class LinksService {
         },
       },
     });
-    return links;
   }
 
-  async find(id: number): Promise<LinkModel | null> {
-    const link = await this.prismaService.link.findUniqueOrThrow({
+  async find(id: number): Promise<LinkModel> {
+    return await this.prismaService.link.findUniqueOrThrow({
       where: { id: Number(id) },
       include: {
         category: {
@@ -64,7 +59,6 @@ export class LinksService {
         },
       },
     });
-    return link;
   }
 
   async delete(id: number): Promise<LinkModel> {

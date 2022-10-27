@@ -34,12 +34,12 @@ export class LinksController {
   }
 
   @Get(':id')
-  find(@Param('id') id: number): Promise<LinkModel | null> {
+  find(@Param('id') id: number): Promise<LinkModel> {
     return this.linksServices.find(id);
   }
 
   @Delete(':id')
-  delete(@Param('id') id: number): Promise<LinkModel | null> {
+  delete(@Param('id') id: number): Promise<LinkModel> {
     return this.linksServices.delete(id);
   }
 }
