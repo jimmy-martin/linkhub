@@ -16,11 +16,7 @@ export class LinksService {
         categoryId: Number(categoryId),
       },
       include: {
-        category: {
-          select: {
-            name: true,
-          },
-        },
+        category: {},
       },
     });
   }
@@ -39,11 +35,7 @@ export class LinksService {
   async findAll(): Promise<LinkModel[]> {
     return await this.prismaService.link.findMany({
       include: {
-        category: {
-          select: {
-            name: true,
-          },
-        },
+        category: {},
       },
     });
   }
@@ -52,11 +44,7 @@ export class LinksService {
     return await this.prismaService.link.findUniqueOrThrow({
       where: { id: Number(id) },
       include: {
-        category: {
-          select: {
-            name: true,
-          },
-        },
+        category: {},
       },
     });
   }
