@@ -13,8 +13,8 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { Category as CategoryModel } from '@prisma/client';
-import { Category } from 'src/entities';
+import { Category as CategoryModel, Link as LinkModel } from '@prisma/client';
+import { Category, Link } from 'src/entities';
 import { CategoriesService } from './categories.service';
 import { CreateCategoriesDto, UpdateCategoriesDto } from './dto';
 
@@ -30,7 +30,7 @@ export class CategoriesController {
   })
   @Get(':id')
   find(@Param('id') id: number): Promise<CategoryModel> {
-    return this.categoriesService.find(id);
+    return this.categoriesService.find(+id);
   }
 
   @ApiOperation({ summary: 'Get all categories' })
@@ -55,17 +55,17 @@ export class CategoriesController {
     return this.categoriesService.create(dto);
   }
 
-  @Put(':id')
   @ApiOperation({ summary: 'Updates a category' })
   @ApiOkResponse({
     description: 'The category has been successfully updated.',
     type: Category,
   })
+  @Put(':id')
   update(
     @Param('id') id: number,
     @Body() dto: UpdateCategoriesDto,
   ): Promise<CategoryModel> {
-    return this.categoriesService.update(id, dto);
+    return this.categoriesService.update(+id, dto);
   }
 
   @ApiOperation({ summary: 'Deletes a category' })
@@ -75,6 +75,17 @@ export class CategoriesController {
   })
   @Delete(':id')
   delete(@Param('id') id: number): Promise<CategoryModel> {
-    return this.categoriesService.delete(id);
+    return this.categoriesService.delete(+id);
+  }
+
+  @ApiOperation({ summary: 'Get all links associated with a category' })
+  @ApiOkResponse({
+    description: 'Returns all links associated with a category.',
+    type: Link,
+    isArray: true,
+  })
+  @Get(':id/links')
+  findAllAssociatedLinks(@Param('id') id: number): Promise<LinkModel[]> {
+    return this.categoriesService.findAllAssociatedLinks(+id);
   }
 }

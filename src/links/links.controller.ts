@@ -30,7 +30,7 @@ export class LinksController {
   })
   @Get(':id')
   find(@Param('id') id: number): Promise<LinkModel> {
-    return this.linksServices.find(id);
+    return this.linksServices.find(+id);
   }
 
   @ApiOperation({ summary: 'Get all links' })
@@ -64,7 +64,7 @@ export class LinksController {
     @Param('id') id: number,
     @Body() dto: UpdateLinksDto,
   ): Promise<LinkModel> {
-    return this.linksServices.update(id, dto);
+    return this.linksServices.update(+id, dto);
   }
 
   @ApiOperation({ summary: 'Deletes a link' })
@@ -74,6 +74,6 @@ export class LinksController {
   })
   @Delete(':id')
   delete(@Param('id') id: number): Promise<LinkModel> {
-    return this.linksServices.delete(id);
+    return this.linksServices.delete(+id);
   }
 }

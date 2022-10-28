@@ -13,7 +13,7 @@ export class LinksService {
       data: {
         name,
         url,
-        categoryId: categoryId ? Number(categoryId) : null,
+        categoryId: categoryId ?? null,
       },
       include: {
         category: {},
@@ -23,35 +23,25 @@ export class LinksService {
 
   async update(id: number, dto: UpdateLinksDto): Promise<LinkModel> {
     return await this.prismaService.link.update({
-      where: {
-        id: Number(id),
-      },
-      data: {
-        ...dto,
-      },
+      where: { id },
+      data: { ...dto },
     });
   }
 
   async findAll(): Promise<LinkModel[]> {
     return await this.prismaService.link.findMany({
-      include: {
-        category: {},
-      },
+      include: { category: {} },
     });
   }
 
   async find(id: number): Promise<LinkModel> {
     return await this.prismaService.link.findUniqueOrThrow({
-      where: { id: Number(id) },
-      include: {
-        category: {},
-      },
+      where: { id },
+      include: { category: {} },
     });
   }
 
   async delete(id: number): Promise<LinkModel> {
-    return await this.prismaService.link.delete({
-      where: { id: Number(id) },
-    });
+    return await this.prismaService.link.delete({ where: { id } });
   }
 }
