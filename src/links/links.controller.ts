@@ -14,7 +14,8 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { Link as LinkModel } from '@prisma/client';
-import { CreateLinksDto, Link, UpdateLinksDto } from './dto';
+import { Link } from 'src/entities';
+import { CreateLinksDto, UpdateLinksDto } from './dto';
 import { LinksService } from './links.service';
 
 @Controller('links')
@@ -35,7 +36,8 @@ export class LinksController {
   @ApiOperation({ summary: 'Get all links' })
   @ApiOkResponse({
     description: 'Returns all links',
-    type: [Link],
+    type: Link,
+    isArray: true,
   })
   @Get()
   findall(): Promise<LinkModel[]> {
@@ -56,7 +58,6 @@ export class LinksController {
   @ApiOperation({ summary: 'Updates a link' })
   @ApiOkResponse({
     description: 'The link has been successfully updated.',
-    type: Link,
   })
   @Put(':id')
   update(

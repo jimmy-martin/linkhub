@@ -7,7 +7,11 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   // Use this to validate threw dtos on our app
-  app.useGlobalPipes(new ValidationPipe());
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true, // Strip unnecessary properties from client requests
+    }),
+  );
 
   const config = new DocumentBuilder()
     .setTitle('Linkhub API')

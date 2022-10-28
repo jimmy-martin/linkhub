@@ -1,5 +1,4 @@
-export class UpdateLinksDto {
-  readonly name?: string;
-  readonly url?: string;
-  readonly categoryId?: number;
-}
+import { PartialType } from '@nestjs/swagger';
+import { CreateLinksDto } from './create-links.dto';
+
+export class UpdateLinksDto extends PartialType(CreateLinksDto) {}

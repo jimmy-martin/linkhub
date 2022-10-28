@@ -14,8 +14,9 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { Category as CategoryModel } from '@prisma/client';
+import { Category } from 'src/entities';
 import { CategoriesService } from './categories.service';
-import { Category, CreateCategoriesDto, UpdateCategoriesDto } from './dto';
+import { CreateCategoriesDto, UpdateCategoriesDto } from './dto';
 
 @Controller('categories')
 @ApiTags('Categories')
@@ -35,7 +36,8 @@ export class CategoriesController {
   @ApiOperation({ summary: 'Get all categories' })
   @ApiOkResponse({
     description: 'Returns all categories',
-    type: [Category],
+    type: Category,
+    isArray: true,
   })
   @Get()
   findAll(): Promise<CategoryModel[]> {

@@ -1,15 +1,19 @@
-import { IsNotEmpty, IsNumber } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsOptional } from 'class-validator';
 import { Type } from 'class-transformer';
+import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateLinksDto {
+  @ApiProperty()
   @IsNotEmpty()
   readonly name: string;
 
+  @ApiProperty()
   @IsNotEmpty()
   readonly url: string;
 
-  @IsNotEmpty()
+  @ApiProperty({ required: false })
   @IsNumber()
+  @IsOptional()
   @Type(() => Number)
-  readonly categoryId: number;
+  readonly categoryId?: number;
 }

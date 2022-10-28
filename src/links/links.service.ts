@@ -13,7 +13,7 @@ export class LinksService {
       data: {
         name,
         url,
-        categoryId: Number(categoryId),
+        categoryId: categoryId ? Number(categoryId) : null,
       },
       include: {
         category: {},

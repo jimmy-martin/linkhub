@@ -13,8 +13,8 @@ model Link {
   url        String
   createdAt  DateTime @default(now()) @db.DateTime(0)
   updatedAt  DateTime @updatedAt @db.DateTime(0)
-  categoryId Int
-  category   Category @relation(fields: [categoryId], references: [id])
+  categoryId Int?
+  category   Category? @relation(fields: [categoryId], references: [id])
 
   @@index([categoryId], map: "Link_categoryId_fkey")
 }

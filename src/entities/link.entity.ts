@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Category } from 'src/categories/dto';
+import { Category } from './category.entity';
 
 export class Link {
   @ApiProperty()
@@ -17,9 +17,9 @@ export class Link {
   @ApiProperty()
   updatedAt: Date;
 
-  @ApiProperty()
-  categoryId: number;
+  @ApiProperty({ required: false })
+  categoryId?: number;
 
-  @ApiProperty()
-  category: Category;
+  @ApiProperty({ required: false })
+  category?: Category;
 }
