@@ -15,9 +15,7 @@ export class LinksService {
         url,
         categoryId: categoryId ?? null,
       },
-      include: {
-        category: {},
-      },
+      include: { category: {} },
     });
   }
 
@@ -25,6 +23,7 @@ export class LinksService {
     return await this.prismaService.link.update({
       where: { id },
       data: { ...dto },
+      include: { category: {} },
     });
   }
 
@@ -42,6 +41,9 @@ export class LinksService {
   }
 
   async delete(id: number): Promise<LinkModel> {
-    return await this.prismaService.link.delete({ where: { id } });
+    return await this.prismaService.link.delete({
+      where: { id },
+      include: { category: {} },
+    });
   }
 }
