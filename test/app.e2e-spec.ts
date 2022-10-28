@@ -35,17 +35,15 @@ describe('AppController (e2e)', () => {
     });
   });
 
-  //#region Categories testing
-  describe('GET /categories', () => {
+  //#region CATEGORIES CRUD
+  describe('Categories CRUD', () => {
     it('returns a list of all categories', async () => {
       const response = await request(app.getHttpServer()).get('/categories');
 
       expect(response.status).toBe(200);
       expect(response.body).toHaveLength(6);
     });
-  });
 
-  describe('GET /categories/3', () => {
     it('returns category at id 3', async () => {
       const response = await request(app.getHttpServer()).get('/categories/3');
 
@@ -54,9 +52,7 @@ describe('AppController (e2e)', () => {
       expect(response.body.id).toEqual(3);
       expect(response.body.name).toEqual('Loisir');
     });
-  });
 
-  describe('POST /categories', () => {
     it('creates a category', async () => {
       const response = await request(app.getHttpServer())
         .post('/categories')
@@ -74,9 +70,7 @@ describe('AppController (e2e)', () => {
       expect(response.status).toBe(200);
       expect(response.body).toHaveLength(7);
     });
-  });
 
-  describe('PUT /categories/7', () => {
     it('updates the category at id 7', async () => {
       const response = await request(app.getHttpServer())
         .put('/categories/7')
@@ -95,9 +89,7 @@ describe('AppController (e2e)', () => {
       expect(response.status).toBe(200);
       expect(response.body).toHaveLength(7);
     });
-  });
 
-  describe('DELETE /categories/7', () => {
     it('deletes the category at id 7', async () => {
       const response = await request(app.getHttpServer()).delete(
         '/categories/7',
@@ -117,6 +109,7 @@ describe('AppController (e2e)', () => {
   });
   //#endregion
 
+  //#region LINKS CRUD
   describe('Links CRUD', () => {
     it('returns all links (no links already created)', async () => {
       const response = await request(app.getHttpServer()).get('/links');
@@ -196,4 +189,5 @@ describe('AppController (e2e)', () => {
       expect(response.body).toHaveLength(0);
     });
   });
+  //#endregion
 });
