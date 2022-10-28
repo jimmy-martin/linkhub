@@ -118,6 +118,20 @@ describe('AppController (e2e)', () => {
       expect(response.body).toHaveLength(0);
     });
 
+    it('creates a link with a category error', async () => {
+      const response = await request(app.getHttpServer())
+        .post('/links')
+        .set('Content-Type', 'application/json')
+        .send({
+          name: 'Documentation NestJS',
+          url: 'https://docs.nestjs.com/',
+          categoryId: 'error',
+        });
+
+      expect(response.status).toBe(400);
+      expect(response.text).toContain('categoryId');
+    });
+
     it('creates a link associated with category 1', async () => {
       const response = await request(app.getHttpServer())
         .post('/links')
