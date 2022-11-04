@@ -3,7 +3,9 @@ import {
   Controller,
   Delete,
   Get,
+  HttpStatus,
   Param,
+  ParseIntPipe,
   Post,
   Put,
 } from '@nestjs/common';
@@ -29,7 +31,7 @@ export class LinksController {
     type: Link,
   })
   @Get(':id')
-  find(@Param('id') id: number): Promise<LinkModel> {
+  find(@Param('id', ParseIntPipe) id: number): Promise<LinkModel> {
     return this.linksServices.find(+id);
   }
 
@@ -46,7 +48,7 @@ export class LinksController {
 
   @ApiOperation({ summary: 'Creates a link' })
   @ApiResponse({
-    status: 201,
+    status: HttpStatus.CREATED,
     description: 'The link has been successfully created.',
     type: Link,
   })
@@ -61,7 +63,7 @@ export class LinksController {
   })
   @Put(':id')
   update(
-    @Param('id') id: number,
+    @Param('id', ParseIntPipe) id: number,
     @Body() dto: UpdateLinksDto,
   ): Promise<LinkModel> {
     return this.linksServices.update(+id, dto);
@@ -73,7 +75,7 @@ export class LinksController {
     type: Link,
   })
   @Delete(':id')
-  delete(@Param('id') id: number): Promise<LinkModel> {
+  delete(@Param('id', ParseIntPipe) id: number): Promise<LinkModel> {
     return this.linksServices.delete(+id);
   }
 }

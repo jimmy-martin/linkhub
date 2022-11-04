@@ -3,7 +3,9 @@ import {
   Controller,
   Delete,
   Get,
+  HttpStatus,
   Param,
+  ParseIntPipe,
   Post,
   Put,
 } from '@nestjs/common';
@@ -29,7 +31,7 @@ export class CategoriesController {
     type: Category,
   })
   @Get(':id')
-  find(@Param('id') id: number): Promise<CategoryModel> {
+  find(@Param('id', ParseIntPipe) id: number): Promise<CategoryModel> {
     return this.categoriesService.find(+id);
   }
 
@@ -46,7 +48,7 @@ export class CategoriesController {
 
   @ApiOperation({ summary: 'Creates a category' })
   @ApiResponse({
-    status: 201,
+    status: HttpStatus.CREATED,
     description: 'The category has been successfully created.',
     type: Category,
   })
@@ -62,7 +64,7 @@ export class CategoriesController {
   })
   @Put(':id')
   update(
-    @Param('id') id: number,
+    @Param('id', ParseIntPipe) id: number,
     @Body() dto: UpdateCategoriesDto,
   ): Promise<CategoryModel> {
     return this.categoriesService.update(+id, dto);
@@ -74,7 +76,7 @@ export class CategoriesController {
     type: Category,
   })
   @Delete(':id')
-  delete(@Param('id') id: number): Promise<CategoryModel> {
+  delete(@Param('id', ParseIntPipe) id: number): Promise<CategoryModel> {
     return this.categoriesService.delete(+id);
   }
 
@@ -85,7 +87,9 @@ export class CategoriesController {
     isArray: true,
   })
   @Get(':id/links')
-  findAllAssociatedLinks(@Param('id') id: number): Promise<LinkModel[]> {
+  findAllAssociatedLinks(
+    @Param('id', ParseIntPipe) id: number,
+  ): Promise<LinkModel[]> {
     return this.categoriesService.findAllAssociatedLinks(+id);
   }
 }

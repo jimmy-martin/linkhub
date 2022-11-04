@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { INestApplication, ValidationPipe } from '@nestjs/common';
+import { HttpStatus, INestApplication, ValidationPipe } from '@nestjs/common';
 import * as request from 'supertest';
 import { AppModule } from './../src/app.module';
 import { PrismaService } from 'src/prisma/prisma.service';
@@ -35,19 +35,39 @@ describe('AppController (e2e)', () => {
     });
   });
 
+  afterAll(async () => {
+    // On rajoute ce code au cas où,
+    // même si on a prévu le reset de la bdd lors dans la commande npm run test:e2e
+    const deleteCategory = prisma.category.deleteMany();
+    const deleteLink = prisma.link.deleteMany();
+
+    await prisma.$transaction([deleteCategory, deleteLink]);
+
+    await prisma.$disconnect();
+  });
+
   //#region CATEGORIES CRUD
   describe('Categories CRUD', () => {
     it('returns a list of all categories', async () => {
       const response = await request(app.getHttpServer()).get('/categories');
 
-      expect(response.status).toBe(200);
+      expect(response.status).toBe(HttpStatus.OK);
       expect(response.body).toHaveLength(6);
+    });
+
+    it('should returns an error trying to get a category with wrong parameter (string instead of int)', async () => {
+      const response = await request(app.getHttpServer()).get(
+        '/categories/error',
+      );
+
+      expect(response.status).not.toBe(HttpStatus.INTERNAL_SERVER_ERROR);
+      expect(response.status).toBe(HttpStatus.BAD_REQUEST);
     });
 
     it('returns category at id 3', async () => {
       const response = await request(app.getHttpServer()).get('/categories/3');
 
-      expect(response.status).toBe(200);
+      expect(response.status).toBe(HttpStatus.OK);
       expect(typeof response.body == 'object').toBe(true);
       expect(response.body.id).toEqual(3);
       expect(response.body.name).toEqual('Loisir');
@@ -59,7 +79,7 @@ describe('AppController (e2e)', () => {
         .set('Content-Type', 'application/json')
         .send({ name: 'Business' });
 
-      expect(response.status).toBe(201);
+      expect(response.status).toBe(HttpStatus.CREATED);
       expect(typeof response.body == 'object').toBe(true);
       expect(response.body.name).toEqual('Business');
     });
@@ -67,7 +87,7 @@ describe('AppController (e2e)', () => {
     it('returns a list of all categories after creating a category', async () => {
       const response = await request(app.getHttpServer()).get('/categories');
 
-      expect(response.status).toBe(200);
+      expect(response.status).toBe(HttpStatus.OK);
       expect(response.body).toHaveLength(7);
     });
 
@@ -77,16 +97,26 @@ describe('AppController (e2e)', () => {
         .set('Content-Type', 'application/json')
         .send({ name: 'Investissement' });
 
-      expect(response.status).toBe(200);
+      expect(response.status).toBe(HttpStatus.OK);
       expect(response.body.name).not.toEqual('Business');
       expect(response.body.name).toEqual('Investissement');
       expect(response.body.id).toEqual(7);
     });
 
+    it('should return an error trying to get a category with wrong parameter (string instead of int)', async () => {
+      const response = await request(app.getHttpServer())
+        .put('/categories/error')
+        .set('Content-Type', 'application/json')
+        .send({ name: 'Investissement' });
+
+      expect(response.status).toBe(HttpStatus.BAD_REQUEST);
+      expect(response.status).not.toBe(HttpStatus.INTERNAL_SERVER_ERROR);
+    });
+
     it('returns a list of all categories after updating a category', async () => {
       const response = await request(app.getHttpServer()).get('/categories');
 
-      expect(response.status).toBe(200);
+      expect(response.status).toBe(HttpStatus.OK);
       expect(response.body).toHaveLength(7);
     });
 
@@ -95,7 +125,7 @@ describe('AppController (e2e)', () => {
         '/categories/7',
       );
 
-      expect(response.status).toBe(200);
+      expect(response.status).toBe(HttpStatus.OK);
       expect(response.body.name).toEqual('Investissement');
       expect(response.body.id).toEqual(7);
     });
@@ -103,7 +133,7 @@ describe('AppController (e2e)', () => {
     it('returns a list of all categories after deleting a category', async () => {
       const response = await request(app.getHttpServer()).get('/categories');
 
-      expect(response.status).toBe(200);
+      expect(response.status).toBe(HttpStatus.OK);
       expect(response.body).toHaveLength(6);
     });
   });
@@ -114,8 +144,15 @@ describe('AppController (e2e)', () => {
     it('returns all links (no links already created)', async () => {
       const response = await request(app.getHttpServer()).get('/links');
 
-      expect(response.status).toBe(200);
+      expect(response.status).toBe(HttpStatus.OK);
       expect(response.body).toHaveLength(0);
+    });
+
+    it('should return an error trying to get a link with wrong parameter (string instead of int)', async () => {
+      const response = await request(app.getHttpServer()).get('/links/error');
+
+      expect(response.status).not.toBe(HttpStatus.INTERNAL_SERVER_ERROR);
+      expect(response.status).toBe(HttpStatus.BAD_REQUEST);
     });
 
     it('creates a link with a category error', async () => {
@@ -128,7 +165,7 @@ describe('AppController (e2e)', () => {
           categoryId: 'error',
         });
 
-      expect(response.status).toBe(400);
+      expect(response.status).toBe(HttpStatus.BAD_REQUEST);
       expect(response.text).toContain('categoryId');
     });
 
@@ -142,7 +179,7 @@ describe('AppController (e2e)', () => {
           categoryId: 1,
         });
 
-      expect(response.status).toBe(201);
+      expect(response.status).toBe(HttpStatus.CREATED);
       expect(typeof response.body == 'object').toBe(true);
       expect(response.body.id).toEqual(1);
       expect(response.body.name).toEqual('Documentation NestJS');
@@ -160,7 +197,7 @@ describe('AppController (e2e)', () => {
           categoryId: 2,
         });
 
-      expect(response.status).toBe(200);
+      expect(response.status).toBe(HttpStatus.OK);
       expect(typeof response.body == 'object').toBe(true);
       expect(response.body.id).toEqual(1);
       expect(response.body.name).not.toEqual('Documentation NestJS');
@@ -172,10 +209,23 @@ describe('AppController (e2e)', () => {
       expect(response.body.category.name).toEqual('Sport');
     });
 
+    it('should return an error trying to get a link with wrong parameter (string instead of int)', async () => {
+      const response = await request(app.getHttpServer())
+        .put('/links/error')
+        .set('Content-Type', 'application/json')
+        .send({
+          name: 'Documentation NestJs',
+          categoryId: 2,
+        });
+
+      expect(response.status).toBe(HttpStatus.BAD_REQUEST);
+      expect(response.status).not.toBe(HttpStatus.INTERNAL_SERVER_ERROR);
+    });
+
     it('returns the link previously updated', async () => {
       const response = await request(app.getHttpServer()).get('/links/1');
 
-      expect(response.status).toBe(200);
+      expect(response.status).toBe(HttpStatus.OK);
       expect(typeof response.body == 'object').toBe(true);
       expect(response.body.id).toEqual(1);
       expect(response.body.name).toEqual('Documentation NestJs');
@@ -187,7 +237,7 @@ describe('AppController (e2e)', () => {
     it('deletes the links previously created', async () => {
       const response = await request(app.getHttpServer()).delete('/links/1');
 
-      expect(response.status).toBe(200);
+      expect(response.status).toBe(HttpStatus.OK);
       expect(typeof response.body == 'object').toBe(true);
       expect(response.body.id).toEqual(1);
       expect(response.body.name).toEqual('Documentation NestJs');
@@ -199,7 +249,7 @@ describe('AppController (e2e)', () => {
     it('returns all links (all links deleted)', async () => {
       const response = await request(app.getHttpServer()).get('/links');
 
-      expect(response.status).toBe(200);
+      expect(response.status).toBe(HttpStatus.OK);
       expect(response.body).toHaveLength(0);
     });
   });

@@ -1,0 +1,4 @@
+{
+  "jest.jestCommandLine": "npm run test:e2e --",
+  "jest.autoRun": "false"
+}
