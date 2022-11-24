@@ -16,4 +16,9 @@ export class CreateLinksDto {
   @IsOptional()
   @Type(() => Number)
   readonly categoryId?: number;
+
+  @ApiProperty()
+  @IsNumber()
+  @Type(() => Number)
+  readonly userId: number;
 }

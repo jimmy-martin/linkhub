@@ -8,12 +8,13 @@ export class LinksService {
   constructor(private readonly prismaService: PrismaService) {}
 
   async create(dto: CreateLinksDto): Promise<LinkModel> {
-    const { name, url, categoryId } = dto;
+    const { name, url, categoryId, userId } = dto;
     return await this.prismaService.link.create({
       data: {
         name,
         url,
         categoryId: categoryId ?? null,
+        userId,
       },
       include: { category: {} },
     });

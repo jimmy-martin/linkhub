@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Category } from './category.entity';
+import { User } from './user.entity';
 
 export class Link {
   @ApiProperty()
@@ -22,4 +23,7 @@ export class Link {
 
   @ApiProperty({ required: false })
   category?: Category;
+
+  @ApiProperty()
+  user: User;
 }

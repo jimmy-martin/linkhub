@@ -29,6 +29,7 @@ lerna-debug.log*
 
 # IDE - VSCode
 .vscode/
+.idea/
 
 .env
 .env.test

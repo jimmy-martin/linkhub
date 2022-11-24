@@ -8,20 +8,32 @@ datasource db {
 }
 
 model Link {
-  id         Int      @id @default(autoincrement())
+  id         Int       @id @default(autoincrement())
   name       String
   url        String
-  createdAt  DateTime @default(now()) @db.DateTime(0)
-  updatedAt  DateTime @updatedAt @db.DateTime(0)
+  createdAt  DateTime  @default(now()) @db.DateTime(0)
+  updatedAt  DateTime  @updatedAt @db.DateTime(0)
   categoryId Int?
+  userId     Int
   category   Category? @relation(fields: [categoryId], references: [id])
+  user       User      @relation(fields: [userId], references: [id])
 
   @@index([categoryId], map: "Link_categoryId_fkey")
+  @@index([userId], map: "Link_userId_fkey")
 }
 
 model Category {
   id        Int      @id @default(autoincrement())
   name      String   @unique
+  createdAt DateTime @default(now()) @db.DateTime(0)
+  updatedAt DateTime @updatedAt @db.DateTime(0)
+  links     Link[]
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  username  String   @unique
+  password  String
   createdAt DateTime @default(now()) @db.DateTime(0)
   updatedAt DateTime @updatedAt @db.DateTime(0)
   links     Link[]

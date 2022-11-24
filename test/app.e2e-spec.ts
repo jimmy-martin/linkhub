@@ -3,12 +3,29 @@ import { HttpStatus, INestApplication, ValidationPipe } from '@nestjs/common';
 import * as request from 'supertest';
 import { AppModule } from './../src/app.module';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { CreateUsersDto } from 'src/users/dto';
+import { CreateCategoriesDto } from 'src/categories/dto';
 
 describe('AppController (e2e)', () => {
   let app: INestApplication;
   let prisma: PrismaService;
 
-  const categories = [
+  const users: CreateUsersDto[] = [
+    {
+      username: 'jimmy',
+      password: 'test',
+    },
+    {
+      username: 'oceane',
+      password: 'test',
+    },
+    {
+      username: 'lizea',
+      password: 'test',
+    },
+  ];
+
+  const categories: CreateCategoriesDto[] = [
     { name: 'Tech' },
     { name: 'Sport' },
     { name: 'Loisir' },
@@ -29,6 +46,10 @@ describe('AppController (e2e)', () => {
     app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
 
     await app.init();
+
+    await prisma.user.createMany({
+      data: [...users],
+    });
 
     await prisma.category.createMany({
       data: [...categories],
@@ -163,13 +184,14 @@ describe('AppController (e2e)', () => {
           name: 'Documentation NestJS',
           url: 'https://docs.nestjs.com/',
           categoryId: 'error',
+          userId: 1,
         });
 
       expect(response.status).toBe(HttpStatus.BAD_REQUEST);
       expect(response.text).toContain('categoryId');
     });
 
-    it('creates a link associated with category 1', async () => {
+    it('creates a link associated with category 1 and user 2', async () => {
       const response = await request(app.getHttpServer())
         .post('/links')
         .set('Content-Type', 'application/json')
@@ -177,6 +199,7 @@ describe('AppController (e2e)', () => {
           name: 'Documentation NestJS',
           url: 'https://docs.nestjs.com/',
           categoryId: 1,
+          userId: 2,
         });
 
       expect(response.status).toBe(HttpStatus.CREATED);
@@ -186,6 +209,7 @@ describe('AppController (e2e)', () => {
       expect(response.body.url).toEqual('https://docs.nestjs.com/');
       expect(response.body.categoryId).toEqual(1);
       expect(response.body.category.name).toEqual('Tech');
+      expect(response.body.userId).toEqual(2);
     });
 
     it('updates the links previously created', async () => {
@@ -207,6 +231,7 @@ describe('AppController (e2e)', () => {
       expect(response.body.category.name).not.toEqual('Tech');
       expect(response.body.categoryId).toEqual(2);
       expect(response.body.category.name).toEqual('Sport');
+      expect(response.body.userId).toEqual(2);
     });
 
     it('should return an error trying to get a link with wrong parameter (string instead of int)', async () => {
@@ -232,6 +257,7 @@ describe('AppController (e2e)', () => {
       expect(response.body.url).toEqual('https://docs.nestjs.com/');
       expect(response.body.categoryId).toEqual(2);
       expect(response.body.category.name).toEqual('Sport');
+      expect(response.body.userId).toEqual(2);
     });
 
     it('deletes the links previously created', async () => {
@@ -244,6 +270,7 @@ describe('AppController (e2e)', () => {
       expect(response.body.url).toEqual('https://docs.nestjs.com/');
       expect(response.body.categoryId).toEqual(2);
       expect(response.body.category.name).toEqual('Sport');
+      expect(response.body.userId).toEqual(2);
     });
 
     it('returns all links (all links deleted)', async () => {
